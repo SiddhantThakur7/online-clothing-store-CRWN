@@ -9,7 +9,7 @@ import rootReducer from './root-reducer';
 const middlewares = [];
 
 if (process.env.NODE_ENV == 'development') {
-        middlewares.push('logger');
+        middlewares.push(logger);
 }
 
 // do not need to add seperate individual middlewares therefore providing abstraction to the number and names of the middle wares to be implemented
