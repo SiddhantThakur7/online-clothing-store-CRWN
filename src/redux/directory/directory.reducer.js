@@ -4,7 +4,7 @@ const INITIAL_STATE = {
       title: "hats",
       imageUrl: "https://i.ibb.co/cvpntL1/hats.png",
       id: 1,
-      linkUrl: "hats",
+      linkUrl: "shop/hats",
     },
     {
       title: "jackets",
@@ -35,13 +35,11 @@ const INITIAL_STATE = {
   ],
 };
 
-
 const directoryReducer = (state = INITIAL_STATE, action) => {
-    switch (action.type) {
-        default:
-            return state;
-    }
+  switch (action.type) {
+    default:
+      return state;
+  }
 };
-
 
 export default directoryReducer;
