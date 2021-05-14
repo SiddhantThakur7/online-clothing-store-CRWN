@@ -10,8 +10,10 @@ import {
   emailSignInSuccess,
   googleSignInFailure,
   googleSignInSuccess,
+  signUpFailure,
   signOutFailure,
   signOutSuccess,
+  signUpSuccess,
 } from "./user.actions";
 import UserActionTypes from "./user.types";
 
@@ -33,7 +35,6 @@ export function* onGoogleSignInStart() {
 
 export function* signInWithEmail({ payload: { email, password } }) {
   try {
-    console.log(email, password);
     const { user } = yield auth.signInWithEmailAndPassword(email, password);
     const UserRef = yield call(createUserProfileDocument, user);
     const userSnapshot = yield UserRef.get();
@@ -67,22 +68,40 @@ export function* onCheckUserSession() {
   yield takeLatest(UserActionTypes.CHECK_USER_SESSION, isUserAuthenticated);
 }
 
-
-export function* signOut(){
-    try {
-        yield auth.signOut();
-        yield put(signOutSuccess());
-    } catch (error) {
-        yield put(signOutFailure(error));
-    }
-};
+export function* signOut() {
+  try {
+    yield auth.signOut();
+    yield put(signOutSuccess());
+  } catch (error) {
+    yield put(signOutFailure(error));
+  }
+}
 
 export function* onSignOutStart() {
-    yield takeLatest(UserActionTypes.SIGN_OUT_START, signOut)
-};
+  yield takeLatest(UserActionTypes.SIGN_OUT_START, signOut);
+}
 
+export function* signUp({ payload: { displayName, email, password } }) {
+  try {
+    const { user } = yield auth.createUserWithEmailAndPassword(email, password);
+    const UserRef = yield createUserProfileDocument(user, { displayName });
+    const userSnapshot = yield UserRef.get();
+    yield put(signUpSuccess({ id: userSnapshot.id, ...userSnapshot.data() }));
+  } catch (error) {
+    yield put(signUpFailure);
+  }
+}
 
+export function* onSignUpStart() {
+  yield takeLatest(UserActionTypes.SIGN_UP_START, signUp);
+}
 
 export function* userSaga() {
-  yield all([call(onCheckUserSession), call(onEmailSignInStart), call(onGoogleSignInStart), call(onSignOutStart)]);
+  yield all([
+    call(onCheckUserSession),
+    call(onEmailSignInStart),
+    call(onGoogleSignInStart),
+    call(onSignOutStart),
+    call(onSignUpStart),
+  ]);
 }
