@@ -13,7 +13,7 @@ var firebaseConfig = {
   measurementId: "G-DZGBZ4P6N2",
 };
 
-export const createUserProfileDocument = async (userAuth, additionalData) => {
+export const createUserProfileDocument = async (userAuth) => {
   if (!userAuth) {
     return;
   }
@@ -73,10 +73,21 @@ export const convertCollectionsSnapshotToMap = collections => {
   }, {});
 };
 
+
+export const getCurrentUser = () => {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = auth.onAuthStateChanged(userAuth => {
+      unsubscribe();
+      resolve(userAuth);
+    }, reject)
+  });
+};
+
+
 export const auth = firebase.auth();
-const googleProvider = new firebase.auth.GoogleAuthProvider();
 export const firestore = firebase.firestore();
 
+export const googleProvider = new firebase.auth.GoogleAuthProvider();
 // const provider = new firebase.auth.GoogleAuthProvider();
 // provider.setCustomParameters({ prompt: "select_account" });
 
